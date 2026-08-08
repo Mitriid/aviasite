@@ -183,7 +183,7 @@
 
             const isGeorgiaBlocked = (sliderStates[0] === 2);
 
-            if (sliderStates[0] === 0) scores.GE += 2;
+            if (sliderStates[0] === 0) scores.GE++;
             if (sliderStates[0] === 2) { scores.AM++; scores.KZ++; }
 
             if (sliderStates[1] === 0) scores.GE++;
@@ -294,28 +294,23 @@
                 calculateWinner();
             }
 
-            // Клик по левому тексту
             leftText.addEventListener('click', (e) => {
                 e.stopPropagation();
                 updateUI(sliderStates[idx] === 0 ? 1 : 0);
             });
 
-            // Клик по правому тексту
             rightText.addEventListener('click', (e) => {
                 e.stopPropagation();
                 updateUI(sliderStates[idx] === 2 ? 1 : 2);
             });
 
-            // Клик по всей карточке (теперь вся строка переключает варианты пополам)
             card.addEventListener('click', (e) => {
-                // Если кликнули прямо на сам свитчер — обрабатываем отдельно ниже
                 if (e.target.closest('.custom-switch')) return;
 
                 const rect = wrapper.getBoundingClientRect();
                 const clickX = e.clientX;
-
-                // Если клик левее центра обертки свитчера — включаем левую опцию, иначе правую
                 const wrapperCenter = rect.left + rect.width / 2;
+
                 if (clickX < wrapperCenter) {
                     updateUI(sliderStates[idx] === 0 ? 1 : 0);
                 } else {
@@ -323,7 +318,6 @@
                 }
             });
 
-            // Клик по самому свитчеру
             switchEl.addEventListener('click', (e) => {
                 const rect = switchEl.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
