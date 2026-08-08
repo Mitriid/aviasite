@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+    background-color: #F2F4F7;
+    color: #0C131D;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Синяя шапка */
+.hero-header {
+    width: 100%;
+    height: 260px;
+    background-color: #0770FF;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom-left-radius: 28px;
+    border-bottom-right-radius: 28px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Крупный заголовок по центру */
+.main-title {
+    font-size: 52px;
+    font-weight: 900;
+    text-align: center;
+    color: #FFFFFF;
+    position: absolute;
+    top: 95px;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(0) scale(1);
+}
+
+/* При появлении плашки: заголовок поднимается наверх и уменьшается */
+.hero-header.has-flag .main-title {
+    transform: translateY(-70px) scale(0.6);
+}
+
+/* Анимация подергивания */
+.main-title.jelly-shake {
+    animation: jellyShake 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes jellyShake {
+    0% { transform: translateY(var(--tx, 0px)) scale(var(--ts, 1)); }
+    30% { transform: translateY(calc(var(--tx, 0px) - 3px)) scale(calc(var(--ts, 1) * 1.03), calc(var(--ts, 1) * 0.96)); }
+    60% { transform: translateY(calc(var(--tx, 0px) + 2px)) scale(calc(var(--ts, 1) * 0.97), calc(var(--ts, 1) * 1.03)); }
+    100% { transform: translateY(var(--tx, 0px)) scale(var(--ts, 1)); }
+}
+
+.hero-header:not(.has-flag) .main-title.jelly-shake {
+    --tx: 0px;
+    --ts: 1;
+}
+.hero-header.has-flag .main-title.jelly-shake {
+    --tx: -70px;
+    --ts: 0.6;
+}
+
+/* Карточка с флагом */
+.flag-container {
+    width: 140px;
+    height: 140px;
+    background: #FFFFFF;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    position: absolute;
+    bottom: 18px;
+
+    opacity: 0;
+    transform: translateY(25px) scale(0.7);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.flag-container.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.flag-icon {
+    font-size: 75px;
+    line-height: 1;
+    display: inline-block;
+}
+
+/* Контейнер списка вопросов */
+.main-container {
+    width: 100%;
+    max-width: 460px;
+    padding: 0 16px 40px;
+    margin-top: 20px;
+}
+
+.toggles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toggle-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 14px 18px;
+    box-shadow: 0 2px 8px rgba(12, 19, 29, 0.04);
+    border: 1px solid #E5E8ED;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+
+.toggle-card:active {
+    background-color: #FAFBFC;
+}
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.toggle-label {
+    font-weight: 700;
+    font-size: 15px;
+    color: #0C131D;
+}
+
+/* Сетка для переключателя (серый фон убран, теперь это просто сетка расположения) */
+.slider-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 50px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0;
+    width: 210px;
+    flex-shrink: 0;
+}
+
+.option-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #626D7A;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.option-text.left {
+    text-align: right;
+}
+
+.option-text.right {
+    text-align: left;
+}
+
+.option-text.active {
+    color: #0C131D;
+    font-weight: 700;
+}
+
+/* Свитчер */
+.custom-switch {
+    width: 50px;
+    height: 26px;
+    background-color: #DCE1E8;
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+}
+
+.switch-thumb {
+    width: 20px;
+    height: 20px;
+    background-color: #94A3B8;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.switch-thumb.active {
+    background-color: #FF5A00;
+    box-shadow: 0 2px 6px rgba(255, 90, 0, 0.4);
+}
+
+/* Блок с кнопкой */
+.bottom-banner {
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 0 18px;
+    box-shadow: 0 2px 8px rgba(12, 19, 29, 0.04);
+    border: 1px solid #E5E8ED;
+    margin-top: 0;
+
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+    pointer-events: none;
+    max-height: 0;
+    overflow: hidden;
+    border-width: 0;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bottom-banner.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    max-height: 120px;
+    padding: 18px;
+    margin-top: 16px;
+    border-width: 1px;
+}
+
+.banner-button {
+    width: 100%;
+    background-color: #FF5A00;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 90, 0, 0.3);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-align: center;
+}
+
+.banner-button:active {
+    transform: scale(0.98);
+    background-color: #E04F00;
+}
