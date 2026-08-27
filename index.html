@@ -35,11 +35,11 @@
                 <div class="toggle-row">
                     <span class="toggle-label" data-action="left">Где мясо?</span>
                     <div class="slider-wrapper">
-                        <span class="option-text left">Внутри</span>
+                        <span class="option-text left">В тесте</span>
                         <div class="custom-switch">
                             <div class="switch-thumb"></div>
                         </div>
-                        <span class="option-text right">Снаружи</span>
+                        <span class="option-text right">На тесте</span>
                     </div>
                 </div>
             </div>
@@ -59,13 +59,13 @@
 
             <div class="toggle-card">
                 <div class="toggle-row">
-                    <span class="toggle-label" data-action="left">Зачем горы?</span>
+                    <span class="toggle-label" data-action="left">В горах...</span>
                     <div class="slider-wrapper">
                         <span class="option-text left">Жить</span>
                         <div class="custom-switch">
                             <div class="switch-thumb"></div>
                         </div>
-                        <span class="option-text right">Смотреть</span>
+                        <span class="option-text right">Отдыхать</span>
                     </div>
                 </div>
             </div>
@@ -123,6 +123,13 @@
         const flagIcon = document.getElementById('flagIcon');
         const bottomBanner = document.getElementById('bottomBanner');
         const bannerBtn = document.getElementById('bannerBtn');
+
+        const popSound = new Audio('pop.mp3');
+
+        function playPop() {
+            popSound.currentTime = 0;
+            popSound.play().catch(() => {});
+        }
 
         const FLAGS = {
             GE: '🇬🇪',
@@ -296,16 +303,19 @@
 
             leftText.addEventListener('click', (e) => {
                 e.stopPropagation();
+                playPop();
                 updateUI(sliderStates[idx] === 0 ? 1 : 0);
             });
 
             rightText.addEventListener('click', (e) => {
                 e.stopPropagation();
+                playPop();
                 updateUI(sliderStates[idx] === 2 ? 1 : 2);
             });
 
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.custom-switch')) return;
+                playPop();
 
                 const rect = wrapper.getBoundingClientRect();
                 const clickX = e.clientX;
@@ -319,6 +329,8 @@
             });
 
             switchEl.addEventListener('click', (e) => {
+                playPop();
+
                 const rect = switchEl.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
                 const width = rect.width;
