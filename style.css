@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
 body {
@@ -152,6 +154,8 @@ body {
     padding: 2px 0;
     width: 210px;
     flex-shrink: 0;
+    /* ДОБАВЛЕНО: отступ справа, чтобы текст не прилипал к краю карточки */
+    margin-right: 8px; 
 }
 
 .option-text {
@@ -251,4 +255,137 @@ body {
 .banner-button:active {
     transform: scale(0.98);
     background-color: #E04F00;
+}
+/* --- АДАПТИВ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ --- */
+@media (max-width: 480px) {
+    /* Слегка уменьшаем шапку, чтобы она не съедала половину экрана */
+    .hero-header {
+        height: 220px;
+        border-bottom-left-radius: 24px;
+        border-bottom-right-radius: 24px;
+    }
+
+    /* Уменьшаем шрифт заголовка, чтобы он влезал в одну строку */
+    .main-title {
+        font-size: 38px;
+        top: 85px;
+    }
+
+    /* Корректируем координаты анимации под новую высоту шапки */
+    .hero-header.has-flag .main-title {
+        transform: translateY(-55px) scale(0.65);
+    }
+    
+    .hero-header.has-flag .main-title.jelly-shake {
+        --tx: -55px;
+        --ts: 0.65;
+    }
+
+    /* Делаем плашку с флагом чуть компактнее */
+    .flag-container {
+        width: 120px;
+        height: 120px;
+        border-radius: 28px;
+        bottom: 16px;
+    }
+
+    .flag-icon {
+        font-size: 64px;
+    }
+
+    /* Оптимизируем отступы основного контейнера */
+    .main-container {
+        padding: 0 12px 30px;
+    }
+
+    .toggle-card {
+        padding: 14px 12px;
+    }
+
+    .toggle-row {
+        gap: 8px;
+    }
+
+    .toggle-label {
+        font-size: 14px;
+    }
+
+    /* Ужимаем правую часть с ползунком, чтобы левому тексту (вопросу) хватало места */
+    .slider-wrapper {
+        width: 180px; 
+    }
+
+    .option-text {
+        font-size: 12px;
+    }
+}
+
+/* Фикс для совсем узких экранов (iPhone SE - 320px) */
+@media (max-width: 350px) {
+    .slider-wrapper {
+        width: 160px;
+    }
+    .toggle-label {
+        font-size: 13px;
+    }
+    .custom-switch {
+        width: 44px;
+    }
+    .switch-thumb {
+        width: 18px;
+        height: 18px;
+        top: 4px;
+    }
+    /* Сдвиг кружочка при активных состояниях для уменьшенного свитчера */
+    .switch-thumb.active[style*="translateX(24px)"] {
+        transform: translateX(20px) !important;
+    }
+    .switch-thumb[style*="translateX(12px)"] {
+        transform: translateX(10px) !important;
+    }
+}
+/* --- ФИНАЛЬНЫЙ ЭКРАН (ТУМАН И ВЫЕЗД ЭЛЕМЕНТОВ) --- */
+
+/* Добавляем шапке, списку и заголовку возможность плавно меняться */
+.hero-header, .toggles-list, .main-title {
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 1. Убираем синий фон шапки, чтобы флаг остался на сером фоне */
+body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .hero-header {
+    background-color: transparent;
+    overflow: visible;
+}
+
+/* 2. Заголовок и список вопросов уходят в туман */
+body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .main-title,
+body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .toggles-list {
+    filter: blur(12px);
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+}
+
+/* 3. Флаг плавно съезжает вниз в центр */
+body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .flag-container {
+    transform: translateY(160px) scale(1.4) !important;
+    z-index: 100;
+}
+
+/* 4. Кнопка уже на экране — просто тянем её вверх навстречу флагу */
+body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .bottom-banner {
+    transform: translateY(-290px) scale(1.05) !important;
+    z-index: 100;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+    border-color: transparent;
+}
+
+/* Адаптив: корректируем дистанцию сближения для телефонов */
+@media (max-width: 480px) {
+    body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .flag-container {
+        transform: translateY(130px) scale(1.3) !important;
+    }
+    body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .bottom-banner {
+        transform: translateY(-260px) scale(1.02) !important;
+    }
 }
