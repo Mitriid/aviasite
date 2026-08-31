@@ -298,12 +298,16 @@ body {
     }
 
     .main-container {
-        padding: 0 12px 30px;
+        padding: 0 12px 100px;
         margin-top: 10px;
     }
 
+    .toggles-list {
+        gap: 6px;
+    }
+
     .toggle-card {
-        padding: 14px 12px;
+        padding: 10px 12px;
     }
 
     .toggle-row {
@@ -369,7 +373,7 @@ body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-ch
 /* Окно с флагом на финальном экране (Мобильные) */
 @media (max-width: 480px) {
     body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .flag-container {
-        transform: translateY(200px) scale(2.5) !important;
+        transform: translateY(130px) scale(2.5) !important;
     }
 
     body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .bottom-banner {
