@@ -4,7 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <title>Куда валить?</title>
+    <title>Куда валить? — Быстрый тест на выбор страны для релокации и переезда</title>
+    <meta name="description" content="Еще не знаете куда свалить? Пройдите тест и подберите идеальную страну для релокации или переезда. Быстрый выбор за 1 минуту.">
+
+    <!-- Meta / Open Graph -->
+    <meta property="og:title" content="Куда валить?">
+    <meta property="og:description" content="Пройди интерактивный тест и узнай, куда тебе свалить!">
+    <meta property="og:image" content="https://wtr.best/preview.jpg">
+    <meta property="og:url" content="https://wtr.best">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://wtr.best/preview.jpg">
+
+    <!-- SEO: Канонический URL и Favicon -->
+    <link rel="canonical" href="https://wtr.best/">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- SEO: Разметка Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Куда валить?",
+      "url": "https://wtr.best",
+      "description": "Пройди интерактивный тест и узнай, куда тебе свалить!",
+      "applicationCategory": "EntertainmentGame",
+      "operatingSystem": "All"
+    }
+    </script>
+
     <link rel="stylesheet" href="style.css">
     <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
       (function () {
@@ -15,6 +45,8 @@
           document.head.appendChild(script);
       })();
     </script>
+    <meta name="keywords" content="куда уехать из россии, куда уехать из рф, куда свалить из россии, куда свалить из рф, куда валить из россии, куда валить из рф, куда переехать из россии, куда переехать из рф, куда эмигрировать из россии, куда эмигрировать из рф, как уехать из россии, как уехать из рф, как свалить из россии, как свалить из рф, как переехать из россии, как переехать из рф, куда бежать из россии, куда бежать из рф, срочно уехать из россии, срочно уехать из рф, экстренная релокация из россии, экстренная релокация из рф, куда уехать жить из россии, куда уехать жить из рф, куда проще уехать из россии, куда проще уехать из рф, куда легко переехать из россии, куда легко переехать из рф, выбор страны для переезда из россии, выбор страны для переезда из рф, безвизовые страны для россиян, безвизовые страны для граждан россии, безвизовые страны для граждан рф, куда уехать без загранпаспорта из россии, куда уехать без загранпаспорта из рф, куда уехать без денег из россии, куда уехать без денег из рф, релокация из россии, релокация из рф, эмиграция из россии, эмиграция из рф, переезд из россии, переезд из рф, как уехать за границу из россии, как уехать за границу из рф">
+<meta name="google-site-verification" content="ULNQmDz9L9AgduREaWWZAozjgf4cS1m0aurolUK7uz0" />
 </head>
 <body>
 
@@ -127,12 +159,12 @@
         </div>
 
         <div class="extra-links" id="extraLinks">
-            <div class="extra-link" id="retryLink">Не согласен? Уточни с другими вопросами</div>
+            <div class="extra-link" id="retryLink">Не согласен? Уточни с другими вопросами!</div>
             <div class="extra-link" id="shareLink">Кинуть в чат друзьям</div>
         </div>
     </main>
 
-   <script>
+    <script>
         const heroHeader = document.querySelector('.hero-header');
         const mainTitle = document.getElementById('mainTitle');
         const flagContainer = document.getElementById('flagContainer');
@@ -168,6 +200,7 @@
         };
 
         let sliderStates = [1, 1, 1, 1, 1, 1, 1];
+        let updateFunctions = [];
         let lastLeader = null;
         let lastChangedCountry = null;
         let previousActiveCount = 0;
@@ -294,33 +327,57 @@
             }
         });
 
-        // Функция поделиться
+        // Функция поделиться (исправлена для ПК и защищена от краша)
         shareLink.addEventListener('click', async () => {
             playPop();
-            const shareData = {
-                title: 'Куда валить?',
-                text: 'Пройди тест и узнай, куда свалить!',
-                url: window.location.href
-            };
 
-            if (navigator.share) {
+            let shareText = 'Пройди тест и узнай, куда тебе свалить!';
+            if (lastLeader && COUNTRY_NAMES[lastLeader]) {
+                shareText = `Я валю в ${COUNTRY_NAMES[lastLeader]}! А ты??`;
+            }
+
+            const fullText = `${shareText} ${window.location.href}`;
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            if (isMobile && navigator.share) {
                 try {
-                    await navigator.share(shareData);
+                    await navigator.share({
+                        title: 'Куда валить?',
+                        text: shareText,
+                        url: window.location.href
+                    });
+                    return;
                 } catch (err) {
-                    // Игнорируем отмену шеринга пользователем
-                }
-            } else if (navigator.clipboard) {
-                try {
-                    await navigator.clipboard.writeText(window.location.href);
-                    const originalText = shareLink.textContent;
-                    shareLink.textContent = 'Ссылка скопирована!';
-                    setTimeout(() => {
-                        shareLink.textContent = originalText;
-                    }, 2000);
-                } catch (err) {
-                    console.error('Ошибка копирования:', err);
+                    if (err.name === 'AbortError') return;
                 }
             }
+
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(fullText);
+                } else {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = fullText;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                }
+
+                const originalText = shareLink.textContent;
+                shareLink.textContent = 'Текст и ссылка скопированы!';
+                setTimeout(() => {
+                    shareLink.textContent = originalText;
+                }, 2000);
+            } catch (err) {
+                alert('Скопируйте ссылку: ' + fullText);
+            }
+        });
+
+        // Сброс ответов при нажатии "Уточни с другими вопросами"
+        retryLink.addEventListener('click', () => {
+            playPop();
+            updateFunctions.forEach(updateUI => updateUI(1));
         });
 
         document.querySelectorAll('.toggle-card').forEach((card, idx) => {
@@ -360,6 +417,8 @@
                 
                 calculateWinner();
             }
+
+            updateFunctions.push(updateUI);
 
             leftText.addEventListener('click', (e) => {
                 e.stopPropagation();
