@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Куда валить?</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Дополнительные стили для корректного отображения маркировки */
+        .bottom-banner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .bottom-banner.visible {
+            max-height: 140px !important; /* Увеличиваем высоту для текста */
+        }
+        .ad-disclosure {
+            font-size: 11px;
+            color: #94A3B8;
+            text-align: center;
+            line-height: 1.2;
+            user-select: none;
+        }
+    </style>
     <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
   (function () {
       var script = document.createElement("script");
@@ -122,6 +141,7 @@
 
         <div class="bottom-banner" id="bottomBanner">
             <button class="banner-button" id="bannerBtn">Найти дешевые билеты</button>
+            <div class="ad-disclosure">Реклама. Go Travel Un Limited. ИНН 9909520797</div>
         </div>
     </main>
 
@@ -150,6 +170,13 @@
             GE: 'Грузию',
             AM: 'Армению',
             KZ: 'Казахстан'
+        };
+
+        // Ссылки на партнерские страницы
+        const PARTNER_LINKS = {
+            KZ: 'https://aviasales.tpo.lv/4IXVhtXr?erid=2VtzqvD4Xnb',
+            GE: 'https://aviasales.tpo.lv/mkebSdET?erid=2VtzqvD4Xnb',
+            AM: 'https://aviasales.tpo.lv/ovy4RIZ2?erid=2VtzqvD4Xnb'
         };
 
         let sliderStates = [1, 1, 1, 1, 1, 1, 1];
@@ -271,6 +298,13 @@
                 bottomBanner.classList.remove('visible');
             }
         }
+
+        // Переход по ссылке при клике на кнопку
+        bannerBtn.addEventListener('click', () => {
+            if (lastLeader && PARTNER_LINKS[lastLeader]) {
+                window.open(PARTNER_LINKS[lastLeader], '_blank');
+            }
+        });
 
         document.querySelectorAll('.toggle-card').forEach((card, idx) => {
             const wrapper = card.querySelector('.slider-wrapper');
