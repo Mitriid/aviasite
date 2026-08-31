@@ -2,37 +2,19 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
     <title>Куда валить?</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Дополнительные стили для корректного отображения маркировки */
-        .bottom-banner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        .bottom-banner.visible {
-            max-height: 140px !important; /* Увеличиваем высоту для текста */
-        }
-        .ad-disclosure {
-            font-size: 11px;
-            color: #94A3B8;
-            text-align: center;
-            line-height: 1.2;
-            user-select: none;
-        }
-    </style>
     <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
-  (function () {
-      var script = document.createElement("script");
-      script.async = 1;
-      script.setAttribute("data-cmp-ab","2");
-      script.src = 'https://emrldco.com/NTY4MzU4.js?t=568358';
-      document.head.appendChild(script);
-  })();
-</script>
+      (function () {
+          var script = document.createElement("script");
+          script.async = 1;
+          script.setAttribute("data-cmp-ab","2");
+          script.src = 'https://emrldco.com/NTY4MzU4.js?t=568358';
+          document.head.appendChild(script);
+      })();
+    </script>
 </head>
 <body>
 
@@ -143,15 +125,22 @@
             <button class="banner-button" id="bannerBtn">Найти дешевые билеты</button>
             <div class="ad-disclosure">Реклама. Go Travel Un Limited. ИНН 9909520797</div>
         </div>
+
+        <div class="extra-links" id="extraLinks">
+            <div class="extra-link" id="retryLink">Не согласен? Уточни с другими вопросами</div>
+            <div class="extra-link" id="shareLink">Кинуть в чат друзьям</div>
+        </div>
     </main>
 
-    <script>
+   <script>
         const heroHeader = document.querySelector('.hero-header');
         const mainTitle = document.getElementById('mainTitle');
         const flagContainer = document.getElementById('flagContainer');
         const flagIcon = document.getElementById('flagIcon');
         const bottomBanner = document.getElementById('bottomBanner');
         const bannerBtn = document.getElementById('bannerBtn');
+        const shareLink = document.getElementById('shareLink');
+        const retryLink = document.getElementById('retryLink');
 
         const popSound = new Audio('pop.mp3');
 
@@ -172,7 +161,6 @@
             KZ: 'Казахстан'
         };
 
-        // Ссылки на партнерские страницы
         const PARTNER_LINKS = {
             KZ: 'https://aviasales.tpo.lv/4IXVhtXr?erid=2VtzqvD4Xnb',
             GE: 'https://aviasales.tpo.lv/mkebSdET?erid=2VtzqvD4Xnb',
@@ -299,10 +287,39 @@
             }
         }
 
-        // Переход по ссылке при клике на кнопку
+        // Переход по реф-ссылке
         bannerBtn.addEventListener('click', () => {
             if (lastLeader && PARTNER_LINKS[lastLeader]) {
                 window.open(PARTNER_LINKS[lastLeader], '_blank');
+            }
+        });
+
+        // Функция поделиться
+        shareLink.addEventListener('click', async () => {
+            playPop();
+            const shareData = {
+                title: 'Куда валить?',
+                text: 'Пройди тест и узнай, куда свалить!',
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (err) {
+                    // Игнорируем отмену шеринга пользователем
+                }
+            } else if (navigator.clipboard) {
+                try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    const originalText = shareLink.textContent;
+                    shareLink.textContent = 'Ссылка скопирована!';
+                    setTimeout(() => {
+                        shareLink.textContent = originalText;
+                    }, 2000);
+                } catch (err) {
+                    console.error('Ошибка копирования:', err);
+                }
             }
         });
 

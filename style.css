@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
 
+html, body {
+    touch-action: manipulation;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -47,12 +51,10 @@ body {
     opacity: 1;
 }
 
-/* При появлении плашки: заголовок поднимается наверх и уменьшается */
 .hero-header.has-flag .main-title {
     transform: translateY(-70px) scale(0.6);
 }
 
-/* Анимация подергивания */
 .main-title.jelly-shake {
     animation: jellyShake 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -98,9 +100,8 @@ body {
     pointer-events: auto;
 }
 
-/* Эмодзи/иконка флага (Десктоп) */
 .flag-icon {
-    font-size: 88px; /* <<< РАЗМЕР ФЛАГА ДЛЯ ДЕСКТОПА (увеличь/уменьши при необходимости) */
+    font-size: 88px;
     line-height: 1;
     display: inline-block;
 }
@@ -147,7 +148,6 @@ body {
     color: #0C131D;
 }
 
-/* Сетка для переключателя */
 .slider-wrapper {
     display: grid;
     grid-template-columns: 1fr 50px 1fr;
@@ -182,7 +182,6 @@ body {
     font-weight: 700;
 }
 
-/* Свитчер */
 .custom-switch {
     width: 50px;
     height: 26px;
@@ -209,7 +208,7 @@ body {
     box-shadow: 0 2px 6px rgba(255, 90, 0, 0.4);
 }
 
-/* Блок с кнопкой */
+/* Блок с кнопкой билетов */
 .bottom-banner {
     width: 100%;
     background: #FFFFFF;
@@ -225,6 +224,10 @@ body {
     max-height: 0;
     overflow: hidden;
     border-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -258,7 +261,46 @@ body {
     background-color: #E04F00;
 }
 
-/* --- АДАПТИВ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ --- */
+.ad-disclosure {
+    font-size: 11px;
+    color: #94A3B8;
+    text-align: center;
+    line-height: 1.2;
+    user-select: none;
+}
+
+/* Ссылки СНАРУЖИ под карточкой */
+.extra-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bottom-banner.visible + .extra-links {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.extra-link {
+    color: #626D7A;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: underline;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+}
+
+.extra-link:active {
+    color: #0C131D;
+}
+
+/* Адаптив для мобильных устройств */
 @media (max-width: 480px) {
     .hero-header {
         height: 130px; 
@@ -272,7 +314,6 @@ body {
         opacity: 1;
     }
 
-    /* При появлении флага заголовок полностью скрывается */
     .hero-header.has-flag .main-title {
         opacity: 0;
         transform: translateY(-20px) scale(0.65);
@@ -284,7 +325,6 @@ body {
         --ts: 0.65;
     }
 
-    /* Карточка флага (маленькая версия во время выбора) */
     .flag-container {
         width: 80px;
         height: 80px;
@@ -292,9 +332,8 @@ body {
         bottom: 25px;
     }
 
-    /* Эмодзи/иконка флага (Мобилки) */
     .flag-icon {
-        font-size: 56px; /* <<< РАЗМЕР ФЛАГА ДЛЯ МОБИЛОК В КАРТОЧКЕ */
+        font-size: 56px;
     }
 
     .main-container {
@@ -327,7 +366,6 @@ body {
     }
 }
 
-/* Фикс для узких экранов */
 @media (max-width: 350px) {
     .slider-wrapper {
         width: 160px;
@@ -343,16 +381,9 @@ body {
         height: 18px;
         top: 4px;
     }
-    .switch-thumb.active[style*="translateX(24px)"] {
-        transform: translateX(20px) !important;
-    }
-    .switch-thumb[style*="translateX(12px)"] {
-        transform: translateX(10px) !important;
-    }
 }
 
-/* --- ФИНАЛЬНЫЙ ЭКРАН --- */
-
+/* Финальный экран */
 .hero-header, .toggles-list, .main-title {
     transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -370,13 +401,26 @@ body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-ch
     pointer-events: none;
 }
 
-/* Окно с флагом на финальном экране (Мобильные) */
+/* Подъем белой карточки И внешних ссылок под ней (Мобильные) */
 @media (max-width: 480px) {
     body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .flag-container {
         transform: translateY(130px) scale(2.5) !important;
     }
 
-    body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .bottom-banner {
+    body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .bottom-banner,
+    body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .extra-links {
         transform: translateY(-230px) scale(1.02) !important;
+    }
+}
+
+/* Подъем белой карточки И внешних ссылок под ней (Десктоп) */
+@media (min-width: 481px) {
+    body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .flag-container {
+        transform: translateY(190px) scale(1.6) !important;
+    }
+
+    body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .bottom-banner,
+    body:has(.toggle-card:nth-child(1) .switch-thumb.active):has(.toggle-card:nth-child(2) .switch-thumb.active):has(.toggle-card:nth-child(3) .switch-thumb.active):has(.toggle-card:nth-child(4) .switch-thumb.active):has(.toggle-card:nth-child(5) .switch-thumb.active):has(.toggle-card:nth-child(6) .switch-thumb.active):has(.toggle-card:nth-child(7) .switch-thumb.active) .extra-links {
+        transform: translateY(-280px) scale(1) !important;
     }
 }
