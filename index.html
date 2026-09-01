@@ -38,6 +38,10 @@
     </script>
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- Google AdSense Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8757764532918901" crossorigin="anonymous"></script>
+
     <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
       (function () {
           var script = document.createElement("script");
@@ -163,18 +167,10 @@
         </div>
 
         <div class="extra-links" id="extraLinks">
-            <div class="extra-link" id="retryLink">Не согласен? Уточни с другими вопросами!</div>
+            <a href="#retry" class="extra-link" id="retryLink">Не согласен? Уточни с другими вопросами!</a>
             <div class="extra-link" id="shareLink">Кинуть в чат друзьям</div>
         </div>
     </main>
-
-    <!-- Модальное окно для рекламы -->
-    <div class="ad-modal" id="adModal">
-        <div class="ad-modal-content">
-            <div class="ad-wrapper" id="adWrapper"></div>
-            <button class="close-ad-btn" id="closeAdBtn">Продолжить тест</button>
-        </div>
-    </div>
 
     <script>
         const heroHeader = document.querySelector('.hero-header');
@@ -185,32 +181,8 @@
         const bannerBtn = document.getElementById('bannerBtn');
         const shareLink = document.getElementById('shareLink');
         const retryLink = document.getElementById('retryLink');
-        const adModal = document.getElementById('adModal');
-        const adWrapper = document.getElementById('adWrapper');
-        const closeAdBtn = document.getElementById('closeAdBtn');
 
         const popSound = new Audio('pop.mp3');
-
-        // Переменные для рекламы
-        let userCountry = 'UNKNOWN';
-        let adLoaded = false;
-
-        // Запрашиваем страну при загрузке страницы, чтобы не ждать при клике
-        fetch('https://api.country.is/')
-            .then(res => res.json())
-            .then(data => { userCountry = data.country; })
-            .catch(() => {
-                if (navigator.language && navigator.language.toLowerCase().includes('ru')) {
-                    userCountry = 'RU';
-                }
-            });
-
-        // Закрытие рекламы
-        closeAdBtn.addEventListener('click', () => {
-            playPop();
-            adModal.classList.remove('visible');
-            setTimeout(() => { adModal.style.display = 'none'; }, 300);
-        });
 
         function playPop() {
             popSound.currentTime = 0;
@@ -385,47 +357,16 @@
             }
         });
 
-        // Сброс ответов + показ рекламы
-        retryLink.addEventListener('click', () => {
+        // Сброс ответов при клике на ссылку (триггерит виньетку AdSense)
+        retryLink.addEventListener('click', (e) => {
+            e.preventDefault();
             playPop();
             
-            // Сбрасываем ползунки
+            // Сбрасываем ползунки в исходное положение
             updateFunctions.forEach(updateUI => updateUI(1));
             
-            // Открываем окно рекламы
-            adModal.style.display = 'flex';
-            setTimeout(() => adModal.classList.add('visible'), 10);
-
-            if (userCountry === 'RU') {
-                adWrapper.innerHTML = '<div style="padding: 40px 20px; color: #94A3B8; text-align: center; font-size: 14px; font-weight: 500; width: 100%;">Реклама для РФ временно отключена.<br><br>Тест сброшен, можно продолжать!</div>';
-            } else {
-                if (!adLoaded) {
-                    // Подключаем сам скрипт гугла только если он нужен
-                    const adScript = document.createElement('script');
-                    adScript.async = true;
-                    adScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8757764532918901';
-                    adScript.crossOrigin = 'anonymous';
-                    document.head.appendChild(adScript);
-
-                    // Собираем рекламный блок
-                    adWrapper.innerHTML = '';
-                    const ins = document.createElement('ins');
-                    ins.className = 'adsbygoogle';
-                    ins.style.display = 'block';
-                    ins.setAttribute('data-ad-client', 'ca-pub-8757764532918901');
-                    ins.setAttribute('data-ad-slot', '6103137209');
-                    ins.setAttribute('data-ad-format', 'auto');
-                    ins.setAttribute('data-full-width-responsive', 'true');
-                    adWrapper.appendChild(ins);
-
-                    // Пушим объявление
-                    const pushScript = document.createElement('script');
-                    pushScript.textContent = '(adsbygoogle = window.adsbygoogle || []).push({});';
-                    adWrapper.appendChild(pushScript);
-
-                    adLoaded = true;
-                }
-            }
+            // Прокручиваем страницу наверх
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         document.querySelectorAll('.toggle-card').forEach((card, idx) => {
