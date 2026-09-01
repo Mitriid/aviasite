@@ -11,9 +11,9 @@
     <meta property="og:title" content="Куда валить?">
     <meta property="og:description" content="Пройди тест и узнай, в какой стране будешь чувстовать себя в своей тарелке!">
     <meta property="og:image" content="https://wtr.best/preview.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:url" content="https://wtr.best">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://wtr.best">
     <meta property="og:type" content="website">
 
     <!-- Twitter / X -->
@@ -49,8 +49,8 @@
     </script>
     <meta name="google-adsense-account" content="ca-pub-8757764532918901">
     <meta name="keywords" content="куда уехать из россии, куда уехать из рф, куда свалить из россии, куда свалить из рф, куда валить из россии, куда валить из рф, куда переехать из россии, куда переехать из рф, куда эмигрировать из россии, куда эмигрировать из рф, как уехать из россии, как уехать из рф, как свалить из россии, как свалить из рф, как переехать из россии, как переехать из рф, куда бежать из россии, куда бежать из рф, срочно уехать из россии, срочно уехать из рф, экстренная релокация из россии, экстренная релокация из рф, куда уехать жить из россии, куда уехать жить из рф, куда проще уехать из россии, куда проще уехать из рф, куда легко переехать из россии, куда легко переехать из рф, выбор страны для переезда из россии, выбор страны для переезда из рф, безвизовые страны для россиян, безвизовые страны для граждан россии, безвизовые страны для граждан рф, куда уехать без загранпаспорта из россии, куда уехать без загранпаспорта из рф, куда уехать без денег из россии, куда уехать без денег из рф, релокация из россии, релокация из рф, эмиграция из россии, эмиграция из рф, переезд из россии, переезд из рф, как уехать за границу из россии, как уехать за границу из рф">
-<meta name="google-site-verification" content="ULNQmDz9L9AgduREaWWZAozjgf4cS1m0aurolUK7uz0" />
-<meta name="yandex-verification" content="ddcb8318e421d1d1" />
+    <meta name="google-site-verification" content="ULNQmDz9L9AgduREaWWZAozjgf4cS1m0aurolUK7uz0" />
+    <meta name="yandex-verification" content="ddcb8318e421d1d1" />
 </head>
 <body>
 
@@ -168,6 +168,14 @@
         </div>
     </main>
 
+    <!-- Модальное окно для рекламы -->
+    <div class="ad-modal" id="adModal">
+        <div class="ad-modal-content">
+            <div class="ad-wrapper" id="adWrapper"></div>
+            <button class="close-ad-btn" id="closeAdBtn">Продолжить тест</button>
+        </div>
+    </div>
+
     <script>
         const heroHeader = document.querySelector('.hero-header');
         const mainTitle = document.getElementById('mainTitle');
@@ -177,26 +185,40 @@
         const bannerBtn = document.getElementById('bannerBtn');
         const shareLink = document.getElementById('shareLink');
         const retryLink = document.getElementById('retryLink');
+        const adModal = document.getElementById('adModal');
+        const adWrapper = document.getElementById('adWrapper');
+        const closeAdBtn = document.getElementById('closeAdBtn');
 
         const popSound = new Audio('pop.mp3');
+
+        // Переменные для рекламы
+        let userCountry = 'UNKNOWN';
+        let adLoaded = false;
+
+        // Запрашиваем страну при загрузке страницы, чтобы не ждать при клике
+        fetch('https://api.country.is/')
+            .then(res => res.json())
+            .then(data => { userCountry = data.country; })
+            .catch(() => {
+                if (navigator.language && navigator.language.toLowerCase().includes('ru')) {
+                    userCountry = 'RU';
+                }
+            });
+
+        // Закрытие рекламы
+        closeAdBtn.addEventListener('click', () => {
+            playPop();
+            adModal.classList.remove('visible');
+            setTimeout(() => { adModal.style.display = 'none'; }, 300);
+        });
 
         function playPop() {
             popSound.currentTime = 0;
             popSound.play().catch(() => {});
         }
 
-        const FLAGS = {
-            GE: '🇬🇪',
-            AM: '🇦🇲',
-            KZ: '🇰🇿'
-        };
-
-        const COUNTRY_NAMES = {
-            GE: 'Грузию',
-            AM: 'Армению',
-            KZ: 'Казахстан'
-        };
-
+        const FLAGS = { GE: '🇬🇪', AM: '🇦🇲', KZ: '🇰🇿' };
+        const COUNTRY_NAMES = { GE: 'Грузию', AM: 'Армению', KZ: 'Казахстан' };
         const PARTNER_LINKS = {
             KZ: 'https://aviasales.tpo.lv/4IXVhtXr?erid=2VtzqvD4Xnb',
             GE: 'https://aviasales.tpo.lv/mkebSdET?erid=2VtzqvD4Xnb',
@@ -272,9 +294,7 @@
             if (sliderStates[6] === 0) scores.GE++;
             if (sliderStates[6] === 2) { scores.AM++; scores.KZ++; }
 
-            if (isGeorgiaBlocked) {
-                scores.GE = -1;
-            }
+            if (isGeorgiaBlocked) { scores.GE = -1; }
 
             if (scores.GE <= 0 && scores.AM === 0 && scores.KZ === 0) {
                 lastLeader = null;
@@ -324,36 +344,26 @@
             }
         }
 
-        // Переход по реф-ссылке
         bannerBtn.addEventListener('click', () => {
             if (lastLeader && PARTNER_LINKS[lastLeader]) {
                 window.open(PARTNER_LINKS[lastLeader], '_blank');
             }
         });
 
-        // Функция поделиться (исправлена для ПК и защищена от краша)
         shareLink.addEventListener('click', async () => {
             playPop();
-
             let shareText = 'Пройди тест и узнай, куда тебе свалить!';
             if (lastLeader && COUNTRY_NAMES[lastLeader]) {
                 shareText = `Я валю в ${COUNTRY_NAMES[lastLeader]}! А ты??`;
             }
-
             const fullText = `${shareText} ${window.location.href}`;
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
             if (isMobile && navigator.share) {
                 try {
-                    await navigator.share({
-                        title: 'Куда валить?',
-                        text: shareText,
-                        url: window.location.href
-                    });
+                    await navigator.share({ title: 'Куда валить?', text: shareText, url: window.location.href });
                     return;
-                } catch (err) {
-                    if (err.name === 'AbortError') return;
-                }
+                } catch (err) { if (err.name === 'AbortError') return; }
             }
 
             try {
@@ -367,21 +377,55 @@
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
                 }
-
                 const originalText = shareLink.textContent;
                 shareLink.textContent = 'Текст и ссылка скопированы!';
-                setTimeout(() => {
-                    shareLink.textContent = originalText;
-                }, 2000);
+                setTimeout(() => { shareLink.textContent = originalText; }, 2000);
             } catch (err) {
                 alert('Скопируйте ссылку: ' + fullText);
             }
         });
 
-        // Сброс ответов при нажатии "Уточни с другими вопросами"
+        // Сброс ответов + показ рекламы
         retryLink.addEventListener('click', () => {
             playPop();
+            
+            // Сбрасываем ползунки
             updateFunctions.forEach(updateUI => updateUI(1));
+            
+            // Открываем окно рекламы
+            adModal.style.display = 'flex';
+            setTimeout(() => adModal.classList.add('visible'), 10);
+
+            if (userCountry === 'RU') {
+                adWrapper.innerHTML = '<div style="padding: 40px 20px; color: #94A3B8; text-align: center; font-size: 14px; font-weight: 500; width: 100%;">Реклама для РФ временно отключена.<br><br>Тест сброшен, можно продолжать!</div>';
+            } else {
+                if (!adLoaded) {
+                    // Подключаем сам скрипт гугла только если он нужен
+                    const adScript = document.createElement('script');
+                    adScript.async = true;
+                    adScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8757764532918901';
+                    adScript.crossOrigin = 'anonymous';
+                    document.head.appendChild(adScript);
+
+                    // Собираем рекламный блок
+                    adWrapper.innerHTML = '';
+                    const ins = document.createElement('ins');
+                    ins.className = 'adsbygoogle';
+                    ins.style.display = 'block';
+                    ins.setAttribute('data-ad-client', 'ca-pub-8757764532918901');
+                    ins.setAttribute('data-ad-slot', '6103137209');
+                    ins.setAttribute('data-ad-format', 'auto');
+                    ins.setAttribute('data-full-width-responsive', 'true');
+                    adWrapper.appendChild(ins);
+
+                    // Пушим объявление
+                    const pushScript = document.createElement('script');
+                    pushScript.textContent = '(adsbygoogle = window.adsbygoogle || []).push({});';
+                    adWrapper.appendChild(pushScript);
+
+                    adLoaded = true;
+                }
+            }
         });
 
         document.querySelectorAll('.toggle-card').forEach((card, idx) => {
@@ -393,7 +437,6 @@
 
             function updateUI(state) {
                 sliderStates[idx] = state;
-
                 if (idx === 0) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'AM' : null);
                 if (idx === 1) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'AM' : null);
                 if (idx === 2) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'AM' : null);
@@ -439,11 +482,9 @@
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.custom-switch')) return;
                 playPop();
-
                 const rect = wrapper.getBoundingClientRect();
                 const clickX = e.clientX;
                 const wrapperCenter = rect.left + rect.width / 2;
-
                 if (clickX < wrapperCenter) {
                     updateUI(sliderStates[idx] === 0 ? 1 : 0);
                 } else {
@@ -453,11 +494,9 @@
 
             switchEl.addEventListener('click', (e) => {
                 playPop();
-
                 const rect = switchEl.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
                 const width = rect.width;
-
                 if (clickX < width / 3) {
                     updateUI(sliderStates[idx] === 0 ? 1 : 0);
                 } else if (clickX > (2 * width) / 3) {
