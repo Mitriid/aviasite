@@ -66,100 +66,8 @@
     </header>
 
     <main class="main-container">
-        <div class="toggles-list">
-            
-            <div class="toggle-card">
-                <div class="toggle-row">
-                    <span class="toggle-label" data-action="left">Есть загран?</span>
-                    <div class="slider-wrapper">
-                        <span class="option-text left">Да</span>
-                        <div class="custom-switch">
-                            <div class="switch-thumb"></div>
-                        </div>
-                        <span class="option-text right">Нет</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="toggle-card">
-                <div class="toggle-row">
-                    <span class="toggle-label" data-action="left">Где мясо?</span>
-                    <div class="slider-wrapper">
-                        <span class="option-text left">В тесте</span>
-                        <div class="custom-switch">
-                            <div class="switch-thumb"></div>
-                        </div>
-                        <span class="option-text right">На тесте</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="toggle-card">
-                <div class="toggle-row">
-                    <span class="toggle-label" data-action="left">Кто ты по вайбу</span>
-                    <div class="slider-wrapper">
-                        <span class="option-text left">Нефор</span>
-                        <div class="custom-switch">
-                            <div class="switch-thumb"></div>
-                        </div>
-                        <span class="option-text right">Нормис</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="toggle-card">
-                <div class="toggle-row">
-                    <span class="toggle-label" data-action="left">В горах...</span>
-                    <div class="slider-wrapper">
-                        <span class="option-text left">Жить</span>
-                        <div class="custom-switch">
-                            <div class="switch-thumb"></div>
-                        </div>
-                        <span class="option-text right">Отдыхать</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="toggle-card">
-                <div class="toggle-row">
-                    <span class="toggle-label" data-action="left">Понтам —</span>
-                    <div class="slider-wrapper">
-                        <span class="option-text left">Фе</span>
-                        <div class="custom-switch">
-                            <div class="switch-thumb"></div>
-                        </div>
-                        <span class="option-text right">Быть</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="toggle-card">
-                <div class="toggle-row">
-                    <span class="toggle-label" data-action="left">Архитектура</span>
-                    <div class="slider-wrapper">
-                        <span class="option-text left">Традиции</span>
-                        <div class="custom-switch">
-                            <div class="switch-thumb"></div>
-                        </div>
-                        <span class="option-text right">Футуризм</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="toggle-card">
-                <div class="toggle-row">
-                    <span class="toggle-label" data-action="left">Что по музыке?</span>
-                    <div class="slider-wrapper">
-                        <span class="option-text left">Рейв</span>
-                        <div class="custom-switch">
-                            <div class="switch-thumb"></div>
-                        </div>
-                        <span class="option-text right">Рэп</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        <!-- Карточки вопросов генерируются в script ниже из QUESTION_SETS -->
+        <div class="toggles-list" id="togglesList"></div>
 
         <div class="bottom-banner" id="bottomBanner">
             <button class="banner-button" id="bannerBtn">Найти дешевые билеты</button>
@@ -181,6 +89,7 @@
         const bannerBtn = document.getElementById('bannerBtn');
         const shareLink = document.getElementById('shareLink');
         const retryLink = document.getElementById('retryLink');
+        const togglesList = document.getElementById('togglesList');
 
         const popSound = new Audio('pop.mp3');
 
@@ -197,7 +106,48 @@
             AM: 'https://aviasales.tpo.lv/ovy4RIZ2?erid=2VtzqvD4Xnb'
         };
 
-        let sliderStates = [1, 1, 1, 1, 1, 1, 1];
+        /*
+         * НАБОРЫ ВОПРОСОВ
+         * ----------------
+         * Каждый элемент верхнего массива — отдельный набор из 7 (или сколько угодно)
+         * вопросов. По клику на "Повторить" происходит переход к следующему набору
+         * по кругу (0 -> 1 -> 0 -> 1 -> ...).
+         *
+         * Чтобы добавить вопрос в набор — допиши объект в соответствующий массив.
+         * Чтобы добавить целый новый набор — допиши ещё один массив сюда, больше
+         * никакой код трогать не нужно.
+         *
+         * points.left / points.right — сколько очков какой стране начисляется
+         * за выбор левого / правого варианта. Можно указывать 1, 2 страны или ни одной.
+         *
+         * passport: true — ставится ТОЛЬКО на вопрос про загранпаспорт. Если выбран
+         * правый вариант ("Нет") — Грузия принудительно исключается из результатов,
+         * т.к. без загранпаспорта поехать туда нельзя.
+         */
+        const QUESTION_SETS = [
+            [
+                { label: "Есть загран?", left: "Да", right: "Нет", points: { left: { GE: 1 }, right: { AM: 1, KZ: 1 } }, passport: true },
+                { label: "Где мясо?", left: "В тесте", right: "На тесте", points: { left: { GE: 1 }, right: { AM: 1, KZ: 1 } } },
+                { label: "Кто ты по вайбу", left: "Нефор", right: "Нормис", points: { left: { GE: 1 }, right: { AM: 1, KZ: 1 } } },
+                { label: "В горах...", left: "Жить", right: "Отдыхать", points: { left: { GE: 1, AM: 1 }, right: { KZ: 1 } } },
+                { label: "Понтам —", left: "Фе", right: "Быть", points: { left: { GE: 1 }, right: { AM: 1, KZ: 1 } } },
+                { label: "Архитектура", left: "Традиции", right: "Футуризм", points: { left: { GE: 1, AM: 1 }, right: { KZ: 1 } } },
+                { label: "Что по музыке?", left: "Рейв", right: "Рэп", points: { left: { GE: 1 }, right: { AM: 1, KZ: 1 } } }
+            ],
+            [
+                { label: "Есть загран?", left: "Да", right: "Нет", points: { left: { GE: 1 }, right: { AM: 1, KZ: 1 } }, passport: true },
+                { label: "Шопинг", left: "Секонд", right: "Молл", points: { left: { GE: 1 }, right: { AM: 1, KZ: 1 } } },
+                { label: "Вода в жару", left: "Фонтанчик", right: "Газировка", points: { left: { AM: 1 }, right: { GE: 1, KZ: 1 } } },
+                { label: "Тебя собьет…", left: "Белая нива", right: "Камри", points: { left: { AM: 1 }, right: { GE: 1, KZ: 1 } } },
+                { label: "Договор", left: "Подписан", right: "На словах", points: { left: { KZ: 1 }, right: { GE: 1, AM: 1 } } },
+                { label: "Кинза???", left: "Пойдет", right: "Фу", points: { left: { GE: 1 }, right: { AM: 1, KZ: 1 } } },
+                { label: "Назначаем встречу", left: "18:55", right: "Вечером", points: { left: { KZ: 1 }, right: { GE: 1, AM: 1 } } }
+            ]
+        ];
+
+        let currentSetIndex = 0;
+        let currentQuestions = [];
+        let sliderStates = [];
         let updateFunctions = [];
         let lastLeader = null;
         let lastChangedCountry = null;
@@ -214,7 +164,7 @@
             if (currentDisplayedFlag !== content) {
                 currentDisplayedFlag = content;
                 flagIcon.classList.remove('flag-pop');
-                void flagIcon.offsetWidth; 
+                void flagIcon.offsetWidth;
                 flagIcon.textContent = content;
                 flagIcon.classList.add('flag-pop');
             } else {
@@ -222,12 +172,33 @@
             }
         }
 
+        function resetResultUI() {
+            currentDisplayedFlag = null;
+            flagContainer.classList.remove('visible');
+            heroHeader.classList.remove('has-flag');
+            bottomBanner.classList.remove('visible');
+        }
+
         function calculateWinner() {
             let scores = { GE: 0, AM: 0, KZ: 0 };
             let activeCount = 0;
+            let isGeorgiaBlocked = false;
 
-            sliderStates.forEach(state => {
+            currentQuestions.forEach((question, idx) => {
+                const state = sliderStates[idx];
                 if (state !== 1) activeCount++;
+
+                if (question.passport && state === 2) isGeorgiaBlocked = true;
+
+                if (state === 0) {
+                    Object.entries(question.points.left).forEach(([country, value]) => {
+                        scores[country] += value;
+                    });
+                } else if (state === 2) {
+                    Object.entries(question.points.right).forEach(([country, value]) => {
+                        scores[country] += value;
+                    });
+                }
             });
 
             if (activeCount > previousActiveCount && activeCount <= 2) {
@@ -235,45 +206,21 @@
             }
             previousActiveCount = activeCount;
 
+            // Финальный экран включаем/выключаем через класс на body,
+            // а не через захардкоженные CSS-селекторы под конкретное число вопросов.
+            document.body.classList.toggle('all-answered', activeCount === currentQuestions.length);
+
             if (activeCount < 3) {
-                currentDisplayedFlag = null;
-                flagContainer.classList.remove('visible');
-                heroHeader.classList.remove('has-flag');
-                bottomBanner.classList.remove('visible');
+                lastLeader = null;
+                resetResultUI();
                 return;
             }
 
-            const isGeorgiaBlocked = (sliderStates[0] === 2);
-
-            if (sliderStates[0] === 0) scores.GE++;
-            if (sliderStates[0] === 2) { scores.AM++; scores.KZ++; }
-
-            if (sliderStates[1] === 0) scores.GE++;
-            if (sliderStates[1] === 2) { scores.AM++; scores.KZ++; }
-
-            if (sliderStates[2] === 0) scores.GE++;
-            if (sliderStates[2] === 2) { scores.AM++; scores.KZ++; }
-
-            if (sliderStates[3] === 0) { scores.GE++; scores.AM++; }
-            if (sliderStates[3] === 2) { scores.KZ++; }
-
-            if (sliderStates[4] === 0) scores.GE++;
-            if (sliderStates[4] === 2) { scores.AM++; scores.KZ++; }
-
-            if (sliderStates[5] === 0) { scores.GE++; scores.AM++; }
-            if (sliderStates[5] === 2) { scores.KZ++; }
-
-            if (sliderStates[6] === 0) scores.GE++;
-            if (sliderStates[6] === 2) { scores.AM++; scores.KZ++; }
-
-            if (isGeorgiaBlocked) { scores.GE = -1; }
+            if (isGeorgiaBlocked) scores.GE = -1;
 
             if (scores.GE <= 0 && scores.AM === 0 && scores.KZ === 0) {
                 lastLeader = null;
-                currentDisplayedFlag = null;
-                flagContainer.classList.remove('visible');
-                heroHeader.classList.remove('has-flag');
-                bottomBanner.classList.remove('visible');
+                resetResultUI();
                 return;
             }
 
@@ -300,7 +247,7 @@
                 flagContainer.classList.add('visible');
                 heroHeader.classList.add('has-flag');
 
-                const completionPercentage = activeCount / sliderStates.length;
+                const completionPercentage = activeCount / currentQuestions.length;
                 if (completionPercentage > 0.8) {
                     bannerBtn.textContent = `Найти дешевые билеты в ${COUNTRY_NAMES[currentWinner]}`;
                     bottomBanner.classList.add('visible');
@@ -309,11 +256,121 @@
                 }
             } else {
                 lastLeader = null;
-                currentDisplayedFlag = null;
-                flagContainer.classList.remove('visible');
-                heroHeader.classList.remove('has-flag');
-                bottomBanner.classList.remove('visible');
+                resetResultUI();
             }
+        }
+
+        // Строит карточки вопросов для текущего набора и навешивает на них обработчики.
+        function renderQuestions() {
+            currentQuestions = QUESTION_SETS[currentSetIndex];
+            sliderStates = currentQuestions.map(() => 1);
+            updateFunctions = [];
+            lastLeader = null;
+            lastChangedCountry = null;
+            previousActiveCount = 0;
+
+            document.body.classList.remove('all-answered');
+            resetResultUI();
+
+            togglesList.innerHTML = '';
+
+            currentQuestions.forEach((question, idx) => {
+                const card = document.createElement('div');
+                card.className = 'toggle-card';
+                card.innerHTML = `
+                    <div class="toggle-row">
+                        <span class="toggle-label">${question.label}</span>
+                        <div class="slider-wrapper">
+                            <span class="option-text left">${question.left}</span>
+                            <div class="custom-switch">
+                                <div class="switch-thumb"></div>
+                            </div>
+                            <span class="option-text right">${question.right}</span>
+                        </div>
+                    </div>
+                `;
+                togglesList.appendChild(card);
+
+                const wrapper = card.querySelector('.slider-wrapper');
+                const switchEl = card.querySelector('.custom-switch');
+                const thumb = card.querySelector('.switch-thumb');
+                const leftText = card.querySelector('.option-text.left');
+                const rightText = card.querySelector('.option-text.right');
+
+                function updateUI(state) {
+                    sliderStates[idx] = state;
+
+                    if (state === 0) {
+                        lastChangedCountry = Object.keys(question.points.left)[0] || null;
+                    } else if (state === 2) {
+                        lastChangedCountry = Object.keys(question.points.right)[0] || null;
+                    } else {
+                        lastChangedCountry = null;
+                    }
+
+                    if (state === 0) {
+                        thumb.style.transform = 'translateX(0px)';
+                        thumb.classList.add('active');
+                        leftText.classList.add('active');
+                        rightText.classList.remove('active');
+                    } else if (state === 2) {
+                        thumb.style.transform = 'translateX(24px)';
+                        thumb.classList.add('active');
+                        leftText.classList.remove('active');
+                        rightText.classList.add('active');
+                    } else {
+                        thumb.style.transform = 'translateX(12px)';
+                        thumb.classList.remove('active');
+                        leftText.classList.remove('active');
+                        rightText.classList.remove('active');
+                    }
+
+                    calculateWinner();
+                }
+
+                updateFunctions.push(updateUI);
+
+                leftText.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playPop();
+                    updateUI(sliderStates[idx] === 0 ? 1 : 0);
+                });
+
+                rightText.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playPop();
+                    updateUI(sliderStates[idx] === 2 ? 1 : 2);
+                });
+
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.custom-switch')) return;
+                    playPop();
+                    const rect = wrapper.getBoundingClientRect();
+                    const clickX = e.clientX;
+                    const wrapperCenter = rect.left + rect.width / 2;
+                    if (clickX < wrapperCenter) {
+                        updateUI(sliderStates[idx] === 0 ? 1 : 0);
+                    } else {
+                        updateUI(sliderStates[idx] === 2 ? 1 : 2);
+                    }
+                });
+
+                switchEl.addEventListener('click', (e) => {
+                    playPop();
+                    const rect = switchEl.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const width = rect.width;
+                    if (clickX < width / 3) {
+                        updateUI(sliderStates[idx] === 0 ? 1 : 0);
+                    } else if (clickX > (2 * width) / 3) {
+                        updateUI(sliderStates[idx] === 2 ? 1 : 2);
+                    } else {
+                        updateUI(1);
+                    }
+                });
+
+                updateUI(1);
+            });
         }
 
         bannerBtn.addEventListener('click', () => {
@@ -357,98 +414,19 @@
             }
         });
 
-        // Сброс ответов при клике на ссылку (триггерит виньетку AdSense)
+        // Клик по "Повторить" переключает на следующий набор вопросов по кругу
+        // (набор 1 -> набор 2 -> набор 1 -> ...) и полностью пересобирает карточки.
         retryLink.addEventListener('click', (e) => {
             e.preventDefault();
             playPop();
-            
-            // Сбрасываем ползунки в исходное положение
-            updateFunctions.forEach(updateUI => updateUI(1));
-            
-            // Прокручиваем страницу наверх
+
+            currentSetIndex = (currentSetIndex + 1) % QUESTION_SETS.length;
+            renderQuestions();
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        document.querySelectorAll('.toggle-card').forEach((card, idx) => {
-            const wrapper = card.querySelector('.slider-wrapper');
-            const switchEl = card.querySelector('.custom-switch');
-            const thumb = card.querySelector('.switch-thumb');
-            const leftText = card.querySelector('.option-text.left');
-            const rightText = card.querySelector('.option-text.right');
-
-            function updateUI(state) {
-                sliderStates[idx] = state;
-                if (idx === 0) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'AM' : null);
-                if (idx === 1) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'AM' : null);
-                if (idx === 2) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'AM' : null);
-                if (idx === 3) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'KZ' : null);
-                if (idx === 4) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'AM' : null);
-                if (idx === 5) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'KZ' : null);
-                if (idx === 6) lastChangedCountry = state === 0 ? 'GE' : (state === 2 ? 'AM' : null);
-
-                if (state === 0) {
-                    thumb.style.transform = 'translateX(0px)';
-                    thumb.classList.add('active');
-                    leftText.classList.add('active');
-                    rightText.classList.remove('active');
-                } else if (state === 2) {
-                    thumb.style.transform = 'translateX(24px)';
-                    thumb.classList.add('active');
-                    leftText.classList.remove('active');
-                    rightText.classList.add('active');
-                } else {
-                    thumb.style.transform = 'translateX(12px)';
-                    thumb.classList.remove('active');
-                    leftText.classList.remove('active');
-                    rightText.classList.remove('active');
-                }
-                
-                calculateWinner();
-            }
-
-            updateFunctions.push(updateUI);
-
-            leftText.addEventListener('click', (e) => {
-                e.stopPropagation();
-                playPop();
-                updateUI(sliderStates[idx] === 0 ? 1 : 0);
-            });
-
-            rightText.addEventListener('click', (e) => {
-                e.stopPropagation();
-                playPop();
-                updateUI(sliderStates[idx] === 2 ? 1 : 2);
-            });
-
-            card.addEventListener('click', (e) => {
-                if (e.target.closest('.custom-switch')) return;
-                playPop();
-                const rect = wrapper.getBoundingClientRect();
-                const clickX = e.clientX;
-                const wrapperCenter = rect.left + rect.width / 2;
-                if (clickX < wrapperCenter) {
-                    updateUI(sliderStates[idx] === 0 ? 1 : 0);
-                } else {
-                    updateUI(sliderStates[idx] === 2 ? 1 : 2);
-                }
-            });
-
-            switchEl.addEventListener('click', (e) => {
-                playPop();
-                const rect = switchEl.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const width = rect.width;
-                if (clickX < width / 3) {
-                    updateUI(sliderStates[idx] === 0 ? 1 : 0);
-                } else if (clickX > (2 * width) / 3) {
-                    updateUI(sliderStates[idx] === 2 ? 1 : 2);
-                } else {
-                    updateUI(1);
-                }
-            });
-
-            updateUI(1);
-        });
+        renderQuestions();
     </script>
 </body>
 </html>
